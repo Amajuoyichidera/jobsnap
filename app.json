@@ -1,12 +1,7 @@
 {
   "expo": {
-<<<<<<< HEAD
     "name": "jobSnap",
     "slug": "jobSnap",
-=======
-    "name": "learning_react_native",
-    "slug": "learning_react_native",
->>>>>>> 4525ea231236835caf3d8b0b51377d7c8fc53417
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
