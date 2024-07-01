@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
     container: {
+        paddingTop: 20,
     },
     job: {
         position: 'absolute',

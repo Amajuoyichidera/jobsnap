@@ -10,19 +10,33 @@ import { useState } from 'react';
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [userName, setUserName] = useState('');
-  const [title, setTitle] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [name, setName] = useState('');
+  const [myTitle, setMyTitle] = useState('');
+  const [myImage, setMyImage] = useState('');
 
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='Profile'>
-          {(props) => <ProfileForm {...props} userName={userName} setUserName={setUserName} title={title} setTitle={setTitle} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />}
+          {(props) => (
+            <ProfileForm
+              {...props}
+              setName={setName}
+              setMyImage={setMyImage}
+              setMyTitle={setMyTitle}
+            />
+          )}
         </Stack.Screen>
         <Stack.Screen name='Jobs'>
-          {(props) => <Jobs {...props} />}
+          {(props) => (
+            <Jobs
+              {...props}
+              myImage={myImage}
+              myTitle={myTitle}
+              name={name}
+            />
+          )}
         </Stack.Screen>
       </Stack.Navigator>
       <StatusBar style="auto" />
@@ -31,7 +45,5 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    
-  },
+  container: {},
 });
