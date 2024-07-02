@@ -2,8 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, TextInput, Modal, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
+import { useFonts } from 'expo-font';
 
-const Jobs = ({ myImage, name, myTitle }) => {
+const Jobs = ({ myImage, name, myTitle, navigation }) => {
+  const [loaded] = useFonts({
+    'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
+  });
+
+  // Check if fonts are loaded
+  if (!loaded) {
+    return null; // Return null or a loading indicator until fonts are loaded
+  }
+
   const userDefaultImg = require('../assets/profile.png');
   const userImg = myImage ? { uri: myImage } : userDefaultImg;
   const [jobs, setJobs] = useState([]);
@@ -12,7 +22,7 @@ const Jobs = ({ myImage, name, myTitle }) => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [meanSalary, setMeanSalary] = useState(0);
-  const [category, setCategory] = useState({ tag: '', label: '' });
+  
 
   useEffect(() => {
     fetchJobs(); // Fetch initial jobs on component mount
@@ -21,13 +31,12 @@ const Jobs = ({ myImage, name, myTitle }) => {
   const fetchJobs = async () => {
     setIsLoading(true);
     const API_KEY = '1ffd5a8cad9ae74bc8ef20fde6978d9a'; // Replace with your Adzuna API Key
-    const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=25`;
+    const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=100`;
 
     try {
       const response = await axios.get(url);
       setJobs(response.data.results);
       setMeanSalary(response.data.mean);
-      setCategory(response.data.category);
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -38,13 +47,12 @@ const Jobs = ({ myImage, name, myTitle }) => {
   const handleSearch = async () => {
     setIsLoading(true);
     const API_KEY = '1ffd5a8cad9ae74bc8ef20fde6978d9a'; // Replace with your Adzuna API Key
-    const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=100&what=${encodeURIComponent(searchText)}`;
+    const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=200&what=${encodeURIComponent(searchText)}`;
 
     try {
       const response = await axios.get(url);
       setJobs(response.data.results);
       setMeanSalary(response.data.mean);
-      setCategory(response.data.category);
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -61,6 +69,12 @@ const Jobs = ({ myImage, name, myTitle }) => {
     setModalVisible(false);
     setSelectedJob(null); // Clear selected job
   };
+
+  const handleApply = () => {
+    setModalVisible(false);
+    setSelectedJob(null);
+    navigation.navigate('JobApply')
+  }
 
   const renderJobDescription = () => {
     if (!selectedJob) return null;
@@ -81,7 +95,7 @@ const Jobs = ({ myImage, name, myTitle }) => {
         <Text style={styles.jobDetailsText}>{new Date(selectedJob.created).toLocaleDateString()}</Text>
         <Text style={styles.jobDetailsSectionTitle}>Mean Salary:</Text>
         <Text style={styles.jobDetailsText}>{`$${meanSalary}`}</Text>
-        <TouchableOpacity style={styles.applyButton} onPress={() => { /* Handle apply functionality */ }}>
+        <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
           <Text style={styles.applyButtonText}>Apply</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.closeButton} onPress={closeJobDetails}>
@@ -110,7 +124,7 @@ const Jobs = ({ myImage, name, myTitle }) => {
           <Text style={styles.text}>{name}</Text>
           <Text style={styles.text2}>{myTitle}</Text>
         </View>
-        <Icon name="bell" size={30} color="#000" />
+        <Icon name="cog" size={30} color="#000" />
       </View>
 
       <TextInput
@@ -179,7 +193,7 @@ const styles = StyleSheet.create({
   img: {
     height: 70,
     width: 55,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   textCon: {
     flex: 1,
@@ -189,10 +203,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textTransform: 'capitalize',
+    fontFamily: 'Poppins',
   },
   text2: {
     fontSize: 18,
     textTransform: 'capitalize',
+    fontFamily: 'Poppins',
+    color: '#888',
   },
   loadingContainer: {
     flex: 1,
@@ -206,9 +223,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 10,
+    fontFamily: 'Poppins',
+    color: '#888',
   },
   searchButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: 'black',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -219,10 +238,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'Poppins',
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
+    fontFamily: 'Poppins',
     marginBottom: 20,
   },
   jobItem: {
@@ -236,18 +257,22 @@ const styles = StyleSheet.create({
   jobTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'Poppins',
   },
   jobCompany: {
     fontSize: 16,
     color: '#666',
+    fontFamily: 'Poppins',
   },
   jobLocation: {
     fontSize: 16,
     color: '#888',
+    fontFamily: 'Poppins',
   },
   jobSalary: {
     fontSize: 16,
     color: '#888',
+    fontFamily: 'Poppins',
   },
   modalContainer: {
     flex: 1,
@@ -255,27 +280,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   jobDetailsScroll: {
-    paddingVertical: 20,
+    marginTop: 40,
+    paddingBottom: 40,
   },
   jobDetailsTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    fontFamily: 'Poppins',
   },
   jobDetailsCompany: {
     fontSize: 20,
     color: '#666',
     marginBottom: 10,
+    fontFamily: 'Poppins',
   },
   jobDetailsSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 5,
+    fontFamily: 'Poppins',
   },
   jobDetailsText: {
     fontSize: 16,
     marginBottom: 10,
+    fontFamily: 'Poppins',
+    color: '#666',
+    lineHeight: 27,
   },
   applyButton: {
     backgroundColor: '#007bff',

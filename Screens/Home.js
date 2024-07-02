@@ -1,7 +1,17 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
+import { useFonts } from 'expo-font';
 
 const Home = ({ navigation }) => {
+    const [loaded] = useFonts({
+        'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
+      });
+    
+      // Check if fonts are loaded
+      if (!loaded) {
+        return null; // Return null or a loading indicator until fonts are loaded
+      }
+
   return (
     <View style={styles.container}>
       <Text style={styles.job}>JOBSNAP</Text>
@@ -40,7 +50,8 @@ const styles = StyleSheet.create({
         marginLeft: 20,
         marginTop: 70,
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontFamily: 'Poppins',
     },
     overCon: {
         paddingTop: 550,
@@ -50,10 +61,12 @@ const styles = StyleSheet.create({
     },
     over: {
         fontSize: 48,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontFamily: 'Poppins',
     },
     jobs: {
-        color: '#4F6FD9'
+        color: '#4F6FD9',
+        fontFamily: 'Poppins',
     },
     btn: {
         backgroundColor: 'black',
@@ -70,6 +83,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         fontSize: 20,
         fontWeight: 'bold',
+        fontFamily: 'Poppins',
     }
 
 })

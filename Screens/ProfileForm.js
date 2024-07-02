@@ -2,8 +2,18 @@ import React, { useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
+import { useFonts } from 'expo-font';
 
 const ProfileForm = ({ navigation, setName, setMyTitle, setMyImage }) => {
+    const [loaded] = useFonts({
+        'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
+      });
+    
+      // Check if fonts are loaded
+      if (!loaded) {
+        return null; // Return null or a loading indicator until fonts are loaded
+      }
+
   const [email, setEmail] = useState('');
   const [age, setAge] = useState('');
   const [number, setNumber] = useState('');
@@ -133,10 +143,11 @@ export default ProfileForm;
 const styles = StyleSheet.create({
   img: {
     height: 80,
-    width: 55
+    width: 55,
+    resizeMode: 'cover',
   },
   container: {
-    paddingTop: 100,
+    paddingTop: 110,
     paddingBottom: 50
   },
   fillCon: {
@@ -148,7 +159,8 @@ const styles = StyleSheet.create({
   fill: {
     fontSize: 25,
     fontWeight: 'bold',
-    paddingBottom: 20
+    paddingBottom: 20,
+    fontFamily: 'Poppins',
   },
   imgCon: {
     borderRadius: 50,
@@ -161,7 +173,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     overflow: 'hidden',
-    resizeMode: 'contain',
   },
   imgSec: {
     display: 'flex',
@@ -184,6 +195,7 @@ const styles = StyleSheet.create({
   upload: {
     color: '#8C8C8C',
     paddingTop: 20,
+    fontFamily: 'Poppins',
   },
   input: {
     marginLeft: 20,
@@ -191,7 +203,8 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 2,
     paddingHorizontal: 15,
-    borderRadius: 20
+    borderRadius: 20,
+    fontFamily: 'Poppins',
   },
   inputCon: {
     display: 'flex',
@@ -210,6 +223,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     padding: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontFamily: 'Poppins',
   }
 });
