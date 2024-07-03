@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, TextInput, Modal, ScrollView } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, TextInput, Modal, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import { useFonts } from 'expo-font';
 
-const Jobs = ({ myImage, name, myTitle, navigation }) => {
+const Jobs = ({ myImage, name, myTitle, navigation, setName, setMyTitle }) => {
   const [loaded] = useFonts({
     'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
@@ -22,6 +22,9 @@ const Jobs = ({ myImage, name, myTitle, navigation }) => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [meanSalary, setMeanSalary] = useState(0);
+  const [editProfile, setEditProfile] = useState(false);
+  const [tempName, setTempName] = useState(name);
+  const [tempTitle, setTempTitle] = useState(myTitle);
   
 
   useEffect(() => {
@@ -31,7 +34,7 @@ const Jobs = ({ myImage, name, myTitle, navigation }) => {
   const fetchJobs = async () => {
     setIsLoading(true);
     const API_KEY = '1ffd5a8cad9ae74bc8ef20fde6978d9a'; // Replace with your Adzuna API Key
-    const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=100`;
+    const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=150`;
 
     try {
       const response = await axios.get(url);
@@ -73,8 +76,18 @@ const Jobs = ({ myImage, name, myTitle, navigation }) => {
   const handleApply = () => {
     setModalVisible(false);
     setSelectedJob(null);
-    navigation.navigate('JobApply')
+    navigation.navigate('JobApply');
   }
+
+  const handleSave = () => {
+    setName(tempName);
+    setMyTitle(tempTitle);
+    setEditProfile(false);
+  };
+
+  const handleClose = () => {
+    setEditProfile(false);
+  };
 
   const renderJobDescription = () => {
     if (!selectedJob) return null;
@@ -108,9 +121,9 @@ const Jobs = ({ myImage, name, myTitle, navigation }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => handleJobClick(item)} style={styles.jobItem}>
       <Text style={styles.jobTitle}>{item.title}</Text>
-      <Text style={styles.jobCompany}>{item.company.display_name}</Text>
-      <Text style={styles.jobLocation}>{item.location.display_name}</Text>
-      <Text style={styles.jobSalary}>{item.salary ? `$${item.salary.min} - $${item.salary.max}` : 'N/A'}</Text>
+      <Text style={styles.jobCompany}>Company: {item.company.display_name}</Text>
+      <Text style={styles.jobLocation}>Location: {item.location.display_name}</Text>
+      <Text style={styles.jobSalary}>Salary: {item.salary ? `$${item.salary.min} - $${item.salary.max}` : 'N/A'}</Text>
     </TouchableOpacity>
   );
 
@@ -124,7 +137,7 @@ const Jobs = ({ myImage, name, myTitle, navigation }) => {
           <Text style={styles.text}>{name}</Text>
           <Text style={styles.text2}>{myTitle}</Text>
         </View>
-        <Icon name="cog" size={30} color="#000" />
+        <Icon onPress={() => setEditProfile(true)} name="cog" size={30} color="#000" />
       </View>
 
       <TextInput
@@ -148,6 +161,7 @@ const Jobs = ({ myImage, name, myTitle, navigation }) => {
           data={jobs}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
+          onEndReached={() => Alert.alert('Jobs finished')}
         />
       )}
 
@@ -162,6 +176,38 @@ const Jobs = ({ myImage, name, myTitle, navigation }) => {
           {renderJobDescription()}
         </View>
       </Modal>
+
+      <Modal
+      animationType="slide"
+      transparent={true}
+      visible={editProfile}
+      >
+      <View style={styles.modalBackground}>
+        <View style={styles.profileModal}>
+          <Text style={styles.modalTitle}>Edit Profile</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={tempName}
+            onChangeText={setTempName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Title"
+            value={tempTitle}
+            onChangeText={setTempTitle}
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.proButton} onPress={handleSave}>
+              <Text style={styles.probuttonText}>Save Changes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.proButton, styles.procloseButton]} onPress={handleClose}>
+              <Text style={styles.probuttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
     </View>
   );
 };
@@ -333,6 +379,53 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: '#000',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  profileModal: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  proButton: {
+    flex: 1,
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  procloseButton: {
+    backgroundColor: '#FF6347',
+  },
+  probuttonText: {
+    color: 'white',
     fontWeight: 'bold',
   },
 });

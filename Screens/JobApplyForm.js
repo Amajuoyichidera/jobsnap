@@ -90,7 +90,7 @@ const JobApplyForm = ({ navigation }) => {
         <Text style={styles.buttonText}>Send Application</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.button, {backgroundColor: 'red'}]} onPress={() => navigation.navigate('Jobs')}>
+      <TouchableOpacity style={[styles.button, {backgroundColor: '#FF6347'}]} onPress={() => navigation.navigate('Jobs')}>
         <Text style={styles.buttonText}>Cancel</Text>
       </TouchableOpacity>
       </View>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     fontFamily: 'Poppins',
-    color: '#888',
+    color: '#888',        
   },
   button: {
     backgroundColor: '#007BFF',
