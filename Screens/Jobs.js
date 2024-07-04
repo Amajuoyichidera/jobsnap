@@ -3,8 +3,9 @@ import { View, Text, Image, FlatList, StyleSheet, ActivityIndicator, TouchableOp
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import { useFonts } from 'expo-font';
+import * as ImagePicker from 'expo-image-picker';
 
-const Jobs = ({ myImage, name, myTitle, navigation, setName, setMyTitle }) => {
+const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTitle }) => {
   const [loaded] = useFonts({
     'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
@@ -16,6 +17,7 @@ const Jobs = ({ myImage, name, myTitle, navigation, setName, setMyTitle }) => {
 
   const userDefaultImg = require('../assets/profile.png');
   const userImg = myImage ? { uri: myImage } : userDefaultImg;
+  const myImg = tempImage ? { uri: tempImage } : userDefaultImg;
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -25,7 +27,21 @@ const Jobs = ({ myImage, name, myTitle, navigation, setName, setMyTitle }) => {
   const [editProfile, setEditProfile] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [tempTitle, setTempTitle] = useState(myTitle);
+  const [tempImage, setTempImage] = useState(myImage)
   
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setTempImage(result.assets[0].uri);
+    } else {
+      Alert.alert('You did not select any image.');
+    }
+  };
+
 
   useEffect(() => {
     fetchJobs(); // Fetch initial jobs on component mount
@@ -82,6 +98,7 @@ const Jobs = ({ myImage, name, myTitle, navigation, setName, setMyTitle }) => {
   const handleSave = () => {
     setName(tempName);
     setMyTitle(tempTitle);
+    setMyImage(tempImage);
     setEditProfile(false);
   };
 
@@ -177,6 +194,7 @@ const Jobs = ({ myImage, name, myTitle, navigation, setName, setMyTitle }) => {
         </View>
       </Modal>
 
+      {/* Modal to edit profile */}
       <Modal
       animationType="slide"
       transparent={true}
@@ -185,11 +203,15 @@ const Jobs = ({ myImage, name, myTitle, navigation, setName, setMyTitle }) => {
       <View style={styles.modalBackground}>
         <View style={styles.profileModal}>
           <Text style={styles.modalTitle}>Edit Profile</Text>
+          <View style={styles.imgCon}>
+          <Image style={styles.img} source={myImg} />
+        </View>
+          <Icon onPress={pickImageAsync} name="plus" size={18} color="black" />
           <TextInput
             style={styles.input}
             placeholder="Name"
-            value={tempName}
-            onChangeText={setTempName}
+           value={tempName}
+           onChangeText={setTempName}
           />
           <TextInput
             style={styles.input}

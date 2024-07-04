@@ -38,6 +38,7 @@ export default function App() {
               name={name}
               setName={setName}
               setMyTitle={setMyTitle}
+              setMyImage={setMyImage}
             />
           )}
         </Stack.Screen>
