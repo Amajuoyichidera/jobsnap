@@ -86,7 +86,7 @@ const JobApplyForm = ({ navigation }) => {
       </TouchableOpacity>
 
       <View style={styles.btn2Con}>
-      <TouchableOpacity style={[styles.button, {backgroundColor: 'green'}]} onPress={handleSubmit}>
+      <TouchableOpacity style={[styles.button, {backgroundColor: 'black'}]} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Send Application</Text>
       </TouchableOpacity>
 

@@ -74,9 +74,9 @@ const ProfileForm = ({ navigation, setName, setMyTitle, setMyImage }) => {
           <View style={styles.imgCon}>
             <Image style={styles.img} source={userImg} />
           </View>
-          <View style={styles.plusCon}>
-            <Icon style={styles.plus} onPress={pickImageAsync} name="plus" size={18} color="black" />
-          </View>
+          <TouchableOpacity style={styles.plusCon} onPress={pickImageAsync}>
+            <Icon style={styles.plus} name="plus" size={18} color="black" />
+          </TouchableOpacity>
         </View>
         <Text style={styles.upload}>Upload a photo</Text>
       </View>
@@ -84,7 +84,7 @@ const ProfileForm = ({ navigation, setName, setMyTitle, setMyImage }) => {
       <View style={styles.inputCon}>
         <TextInput
           placeholderTextColor='#8C8C8C'
-          style={[styles.input, { borderColor: isFocused.userName ? '#4869D7' : '#8C8C8C' }]}
+          style={[styles.input, { borderColor: isFocused.userName ? '#4869D7' : '#ccc' }]}
           placeholder='Full Name'
           onChangeText={setUserName}
           onFocus={() => handleFocus('userName')}
@@ -93,7 +93,7 @@ const ProfileForm = ({ navigation, setName, setMyTitle, setMyImage }) => {
         />
         <TextInput
           placeholderTextColor='#8C8C8C'
-          style={[styles.input, { borderColor: isFocused.age ? '#4869D7' : '#8C8C8C' }]}
+          style={[styles.input, { borderColor: isFocused.age ? '#4869D7' : '#ccc' }]}
           onFocus={() => handleFocus('age')}
           onBlur={() => handleBlur('age')}
           placeholder='Age'
@@ -103,7 +103,7 @@ const ProfileForm = ({ navigation, setName, setMyTitle, setMyImage }) => {
         />
         <TextInput
           placeholderTextColor='#8C8C8C'
-          style={[styles.input, { borderColor: isFocused.email ? '#4869D7' : '#8C8C8C' }]}
+          style={[styles.input, { borderColor: isFocused.email ? '#4869D7' : '#ccc' }]}
           onFocus={() => handleFocus('email')}
           onBlur={() => handleBlur('email')}
           value={email}
@@ -113,7 +113,7 @@ const ProfileForm = ({ navigation, setName, setMyTitle, setMyImage }) => {
         />
         <TextInput
           placeholderTextColor='#8C8C8C'
-          style={[styles.input, { borderColor: isFocused.number ? '#4869D7' : '#8C8C8C' }]}
+          style={[styles.input, { borderColor: isFocused.number ? '#4869D7' : '#ccc' }]}
           onFocus={() => handleFocus('number')}
           onBlur={() => handleBlur('number')}
           value={number}
@@ -123,7 +123,7 @@ const ProfileForm = ({ navigation, setName, setMyTitle, setMyImage }) => {
         />
         <TextInput
           placeholderTextColor='#8C8C8C'
-          style={[styles.input, { borderColor: isFocused.title ? '#4869D7' : '#8C8C8C' }]}
+          style={[styles.input, { borderColor: isFocused.title ? '#4869D7' : '#ccc' }]}
           onFocus={() => handleFocus('title')}
           onBlur={() => handleBlur('title')}
           value={title}
@@ -142,10 +142,9 @@ export default ProfileForm;
 
 const styles = StyleSheet.create({
   img: {
-    height: 80,
-    width: 55,
-    resizeMode: 'cover',
-  },
+    height: 100,
+    width: 100,
+ },
   container: {
     paddingTop: 110,
     paddingBottom: 50
@@ -164,7 +163,7 @@ const styles = StyleSheet.create({
   },
   imgCon: {
     borderRadius: 50,
-    borderColor: 'black',
+    borderColor: '#ccc',
     borderWidth: 2,
     width: 100,
     height: 100,
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   plusCon: {
-    backgroundColor: '#4869D7',
+    backgroundColor: '#007BFF',
     borderRadius: 50,
     width: 30,
     height: 30,

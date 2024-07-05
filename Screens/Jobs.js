@@ -10,14 +10,12 @@ const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTi
     'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
 
-  // Check if fonts are loaded
   if (!loaded) {
-    return null; // Return null or a loading indicator until fonts are loaded
+    return null;
   }
 
   const userDefaultImg = require('../assets/profile.png');
   const userImg = myImage ? { uri: myImage } : userDefaultImg;
-  const myImg = tempImage ? { uri: tempImage } : userDefaultImg;
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -27,8 +25,8 @@ const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTi
   const [editProfile, setEditProfile] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [tempTitle, setTempTitle] = useState(myTitle);
-  const [tempImage, setTempImage] = useState(myImage)
-  
+  const [tempImage, setTempImage] = useState(userImg);
+
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -36,20 +34,19 @@ const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTi
     });
 
     if (!result.canceled) {
-      setTempImage(result.assets[0].uri);
+      setTempImage({ uri: result.assets[0].uri });
     } else {
       Alert.alert('You did not select any image.');
     }
   };
 
-
   useEffect(() => {
-    fetchJobs(); // Fetch initial jobs on component mount
+    fetchJobs();
   }, []);
 
   const fetchJobs = async () => {
     setIsLoading(true);
-    const API_KEY = '1ffd5a8cad9ae74bc8ef20fde6978d9a'; // Replace with your Adzuna API Key
+    const API_KEY = '1ffd5a8cad9ae74bc8ef20fde6978d9a';
     const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=150`;
 
     try {
@@ -64,41 +61,47 @@ const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTi
   };
 
   const handleSearch = async () => {
-    setIsLoading(true);
-    const API_KEY = '1ffd5a8cad9ae74bc8ef20fde6978d9a'; // Replace with your Adzuna API Key
+    const API_KEY = '1ffd5a8cad9ae74bc8ef20fde6978d9a';
     const url = `https://api.adzuna.com/v1/api/jobs/us/search/1?app_id=2a71717e&app_key=${API_KEY}&results_per_page=200&what=${encodeURIComponent(searchText)}`;
-
-    try {
-      const response = await axios.get(url);
-      setJobs(response.data.results);
-      setMeanSalary(response.data.mean);
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-    } finally {
-      setIsLoading(false);
+    
+    if(searchText === '') {
+      Alert.alert('input a text');
+      return;
+    } else {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(url);
+        setJobs(response.data.results);
+        setMeanSalary(response.data.mean);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
+   
   };
 
   const handleJobClick = (job) => {
     setSelectedJob(job);
-    setModalVisible(true); // Show job details modal
+    setModalVisible(true);
   };
 
   const closeJobDetails = () => {
     setModalVisible(false);
-    setSelectedJob(null); // Clear selected job
+    setSelectedJob(null);
   };
 
   const handleApply = () => {
     setModalVisible(false);
     setSelectedJob(null);
     navigation.navigate('JobApply');
-  }
+  };
 
   const handleSave = () => {
     setName(tempName);
     setMyTitle(tempTitle);
-    setMyImage(tempImage);
+    setMyImage(tempImage.uri);
     setEditProfile(false);
   };
 
@@ -196,40 +199,44 @@ const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTi
 
       {/* Modal to edit profile */}
       <Modal
-      animationType="slide"
-      transparent={true}
-      visible={editProfile}
+        animationType='slide'  
+        transparent={true}
+        visible={editProfile}
       >
-      <View style={styles.modalBackground}>
-        <View style={styles.profileModal}>
-          <Text style={styles.modalTitle}>Edit Profile</Text>
-          <View style={styles.imgCon}>
-          <Image style={styles.img} source={myImg} />
-        </View>
-          <Icon onPress={pickImageAsync} name="plus" size={18} color="black" />
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-           value={tempName}
-           onChangeText={setTempName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Title"
-            value={tempTitle}
-            onChangeText={setTempTitle}
-          />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.proButton} onPress={handleSave}>
-              <Text style={styles.probuttonText}>Save Changes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.proButton, styles.procloseButton]} onPress={handleClose}>
-              <Text style={styles.probuttonText}>Close</Text>
-            </TouchableOpacity>
+        <View style={styles.modalBackground}>
+          <View style={styles.profileModal}>
+            <Text style={styles.modalTitle}>Edit Profile</Text>
+            <View style={styles.imgSec}>
+              <View style={styles.imgCon}>
+                <Image style={styles.img} source={tempImage} />
+              </View>
+             <TouchableOpacity style={styles.plusCon} onPress={pickImageAsync}>
+               <Icon style={styles.plus} name="plus" size={18} color="black" />
+             </TouchableOpacity>
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Name"
+              value={tempName}
+              onChangeText={setTempName}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Title"
+              value={tempTitle}
+              onChangeText={setTempTitle}
+            />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.proButton} onPress={handleSave}>
+                <Text style={styles.probuttonText}>Save Changes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.proButton, styles.procloseButton]} onPress={handleClose}>
+                <Text style={styles.probuttonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
     </View>
   );
 };
@@ -249,19 +256,18 @@ const styles = StyleSheet.create({
   },
   imgCon: {
     borderRadius: 50,
-    borderColor: 'black',
+    borderColor: '#ccc',
     borderWidth: 2,
-    width: 70,
-    height: 70,
+    width: 75,
+    height: 75,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
     marginRight: 10,
   },
   img: {
-    height: 70,
-    width: 55,
-    resizeMode: 'cover',
+    height: 75,
+    width: 75,
   },
   textCon: {
     flex: 1,
@@ -386,7 +392,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   closeButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#FF6347',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -399,7 +405,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   closeButtonText: {
-    color: '#000',
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -417,7 +423,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -429,6 +435,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 20,
+    fontFamily: 'Poppins',
+    color: '#888',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -449,5 +457,22 @@ const styles = StyleSheet.create({
   probuttonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  plusCon: {
+    backgroundColor: '#007BFF',
+    borderRadius: 50,
+    width: 30,
+    height: 30,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -20,
+    marginLeft: 50
+  },
+  plus: {
+    color: 'white',
+  },
+  imgSec: {
+    marginBottom: 20
   },
 });
