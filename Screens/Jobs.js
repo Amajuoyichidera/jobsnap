@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useFonts } from 'expo-font';
 import * as ImagePicker from 'expo-image-picker';
 
-const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTitle }) => {
+const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTitle, setApplyJobName, setApplyJobCompany }) => {
   const [loaded] = useFonts({
     'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
@@ -84,6 +84,8 @@ const Jobs = ({ myImage, setMyImage, name, myTitle, navigation, setName, setMyTi
 
   const handleJobClick = (job) => {
     setSelectedJob(job);
+    setApplyJobName(job.title);
+    setApplyJobCompany(job.company.display_name);
     setModalVisible(true);
   };
 

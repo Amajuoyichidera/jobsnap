@@ -5,7 +5,7 @@ import { useFonts } from 'expo-font';
 import LottieView from 'lottie-react-native';
 import { Picker } from '@react-native-picker/picker';
 
-const JobApplyForm = ({ navigation }) => {
+const JobApplyForm = ({ navigation, applyJobName, applyJobCompany }) => {
   const [loaded] = useFonts({
     'Poppins-Bold': require('../assets/fonts/Poppins-Bold.ttf'),
   });
@@ -20,6 +20,7 @@ const JobApplyForm = ({ navigation }) => {
   const [number, setNumber] = useState('');
   const [gender, setGender] = useState(''); // Add state for gender
   const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false);
+  const [isFocused, setIsFocused] = useState({});
 
   const handleFilePicker = async () => {
     try {
@@ -47,33 +48,51 @@ const JobApplyForm = ({ navigation }) => {
     navigation.navigate('Jobs');
   };
 
+  const handleFocus = (field) => {
+    setIsFocused({ ...isFocused, [field]: true });
+  };
+
+  const handleBlur = (field) => {
+    setIsFocused({ ...isFocused, [field]: false });
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.info}>Contact Info</Text>
+      <View style={{paddingBottom: 20}}>
+      <Text style={styles.detail}>Apply To:  <Text style={styles.detailText}>{applyJobCompany}</Text> </Text>
+      <Text style={styles.detail}>Role:  <Text style={styles.detailText}>{applyJobName}</Text> </Text>
+      </View>
       <Text style={styles.label}>Name:</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: isFocused.name ? '#4869D7' : '#ccc' }]}
         placeholder="Enter your name"
         value={name}
         onChangeText={setName}
+        onFocus={() => handleFocus('name')}
+        onBlur={() => handleBlur('name')}
       />
 
       <Text style={styles.label}>Email:</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: isFocused.email ? '#4869D7' : '#ccc' }]}
         placeholder="Enter your email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
+        onFocus={() => handleFocus('email')}
+        onBlur={() => handleBlur('email')}
       />
 
       <Text style={styles.label}>Number:</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: isFocused.number ? '#4869D7' : '#ccc' }]}
         placeholder="Enter your Phone Number"
         value={number}
         onChangeText={setNumber}
         keyboardType='numeric'
+        onFocus={() => handleFocus('number')}
+        onBlur={() => handleBlur('number')}
       />
 
       <Text style={styles.label}>Gender:</Text>
@@ -138,16 +157,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
-    marginBottom: 20,
+    marginBottom: 15,
     fontFamily: 'Poppins',
     color: '#888',
   },
   picker: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
@@ -196,11 +215,19 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 30,
     textAlign: 'center',
-    fontWeight: 'bold',
-    paddingBottom: 30,
+    paddingBottom: 10,
     textTransform: 'uppercase',
     fontFamily: 'Poppins',
   },
+  detail: {
+    fontSize: 25,
+    fontFamily: 'Poppins',
+    paddingTop: 8,
+  },
+  detailText: {
+    color: '#888',
+  }
+
 });
 
 export default JobApplyForm;

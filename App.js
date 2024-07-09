@@ -14,6 +14,8 @@ export default function App() {
   const [name, setName] = useState('');
   const [myTitle, setMyTitle] = useState('');
   const [myImage, setMyImage] = useState('');
+  const [applyJobName, setApplyJobName] = useState('');
+  const [applyJobCompany, setApplyJobCompany] = useState('');
 
   return (
     <NavigationContainer>
@@ -39,10 +41,14 @@ export default function App() {
               setName={setName}
               setMyTitle={setMyTitle}
               setMyImage={setMyImage}
+              setApplyJobName={setApplyJobName}
+              setApplyJobCompany={setApplyJobCompany}
             />
           )}
         </Stack.Screen>
-        <Stack.Screen name='JobApply' component={JobApplyForm} />
+        <Stack.Screen name='JobApply'>
+          {(props) => (<JobApplyForm {...props} applyJobCompany={applyJobCompany} applyJobName={applyJobName} />)}
+        </Stack.Screen>
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
